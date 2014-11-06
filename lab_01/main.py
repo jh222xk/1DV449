@@ -66,6 +66,9 @@ if __name__ == '__main__':
     print "*** Done scrapping!"
     print "*** Saving data..."
 
+    # Get the number of courses fetched
+    data.append({'count': len(data)})
+
     # Save the data to file
     with open('data.json', 'w') as outfile:
         json.dump(data, outfile, default=scraper.date_handler, indent=True, encoding='utf-8')
