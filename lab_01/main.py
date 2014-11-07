@@ -59,6 +59,9 @@ if __name__ == '__main__':
                 print 'URL: %s' % scraper.courseUrl if scraper.courseUrl else 'No url information'
                 print 'Courseplan: %s' % scraper.coursePlan if scraper.coursePlan else 'No course plan information'
                 print 'Ledtext: %s' % scraper.introText if scraper.introText else 'No intro information'
+                print 'Senaste post titel: %s' % scraper.latestPostTitle if scraper.latestPostTitle else 'No latest title information'
+                print 'Senaste post skribent: %s' % scraper.latestPostAuthor if scraper.latestPostAuthor else 'No latest author information'
+                print 'Senaste post datum: %s' % scraper.latestPostTime if scraper.latestPostTime else 'No latest date information'
 
             # Append our data to the list
             data.append({
@@ -67,6 +70,9 @@ if __name__ == '__main__':
                 'course_url': scraper.courseUrl if scraper.courseUrl else 'No url information',
                 'course_plan': scraper.coursePlan if scraper.coursePlan else 'No course plan information',
                 'intro_text': scraper.introText if scraper.introText else 'No intro information',
+                'latest_post_title': scraper.latestPostTitle if scraper.latestPostTitle else 'No latest title information',
+                'latest_post_author': scraper.latestPostAuthor if scraper.latestPostAuthor else 'No latest author information',
+                'latest_post_date': scraper.latestPostTime if scraper.latestPostTime else 'No latest date information',
                 'timestamp': datetime.datetime.now().strftime(global_data.CACHE_DATETIME_FORMAT) if datetime.datetime.now else 'Timestamp failed'
             })
 

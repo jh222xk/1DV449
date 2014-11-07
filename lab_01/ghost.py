@@ -16,6 +16,11 @@ class Ghost:
     courseUrl = ''
     coursePlan = ''
     introText = ''
+    latestPostUrl = ''
+    latestPost = ''
+    latestPostTitle = ''
+    latestPostAuthor = ''
+    latestPostTime = ''
 
     headers = {
         'User-Agent': 'Ghost',
@@ -45,6 +50,10 @@ class Ghost:
         self.courseCode = self.getCourseCode()
         self.coursePlan = self.getCoursePlan()
         self.introText = self.getEntryContent()
+        self.latestPostUrl = self.getLatestPostUrl()
+        self.latestPostTitle = self.getLatestPostTitle()
+        self.latestPostAuthor = self.getLatestPostAuthor()
+        self.latestPostTime = self.getLatestPostTime()
 
     def getNextPage(self):
         """
@@ -113,6 +122,40 @@ class Ghost:
         except Exception, e:
             return ""
         return url
+
+    def getLatestPostUrl(self):
+        posts = []
+        try:
+            ul = self.soup.find('ul', {'class': 'item-list'}).findAll('div', {'class': 'meta'})
+            for postUrl in ul:
+                for anchor in postUrl.findAll('a'):
+                    posts.append(anchor.get('href'))
+        except Exception, e:
+            return ""
+        return posts
+
+    def getLatestPostAuthor(self):
+        try:
+            authors = self.soup.find('p', {'class': 'entry-byline'}).find('strong').get_text()
+        except Exception, e:
+            return ""
+        return authors
+
+    def getLatestPostTime(self):
+        try:
+            text = self.soup.find('p', {'class': 'entry-byline'}).get_text()
+            match = re.search(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}', text)
+            date = match.group()
+        except Exception, e:
+            return ""
+        return date
+
+    def getLatestPostTitle(self):
+        try:
+            title = self.soup.find('h1', {'class': 'entry-title'}).get_text()
+        except Exception, e:
+            return ""
+        return title
 
     def getHref(self):
         """
