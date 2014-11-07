@@ -10,6 +10,7 @@ import time
 
 from ghost import Ghost
 
+
 class global_data:
     DEBUG = False
     CACHE_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
@@ -87,9 +88,12 @@ if __name__ == '__main__':
         data.append({'count': len(data)})
         data.append({'last_fetch': datetime.datetime.now().strftime(global_data.CACHE_DATETIME_FORMAT)})
 
+        # Sort the list of dicts by title of the courses
+        sortedList = sorted(data, key=lambda k: k.get('title'))
+
         # Save the data to file
         with open(global_data.DATA_FILE_NAME, 'w') as outfile:
-            json.dump(data, outfile, default=scraper.date_handler, indent=True, encoding='utf-8')
+            json.dump(sortedList, outfile, default=scraper.date_handler, indent=True, encoding='utf-8')
         time.sleep(1)
         print "*** Done saving"
     else:
