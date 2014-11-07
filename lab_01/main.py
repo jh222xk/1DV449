@@ -10,11 +10,22 @@ import time
 
 from ghost import Ghost
 
+class SaveToJsonFile:
+
+    def save_to_file(self, file_name, data):
+        with open(file_name, 'w') as outfile:
+            json.dump(data, outfile, default=scraper.date_handler, indent=True, encoding='utf-8')
+
+    def read_file(self, file_name):
+        with open(file_name) as dataFile:
+            jsonData = json.load(dataFile)
+        return jsonData
 
 class global_data:
     DEBUG = False
     CACHE_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
-    DATA_FILE_NAME = 'data.json'
+    COURSE_DATA_FILE_NAME = 'course_data.json'
+    PROGRAM_DATA_FILE_NAME = 'program_data.json'
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(
@@ -34,14 +45,14 @@ if __name__ == '__main__':
     data = list()
 
     try:
-        with open(global_data.DATA_FILE_NAME) as dataFile:
-            jsonData = json.load(dataFile)
-        lastFetched = jsonData[-1].values()[0]
-        lastFetched = datetime.datetime.strptime(lastFetched, global_data.CACHE_DATETIME_FORMAT)
+        with open(global_data.COURSE_DATA_FILE_NAME) as data_file:
+            json_data = json.load(data_file)
+        last_fetched = jsonData[-1].values()[0]
+        last_fetched = datetime.datetime.strptime(last_fetched, global_data.CACHE_DATETIME_FORMAT)
     except Exception, e:
-        lastFetched = None
+        last_fetched = None
 
-    if lastFetched is None or lastFetched < datetime.datetime.now() - datetime.timedelta(minutes = 5):
+    if last_fetched is None or last_fetched < datetime.datetime.now() - datetime.timedelta(minutes = 5):
         print "*** Scrapping, please wait..."
 
         # Fetch as long as queue is not empty
@@ -53,33 +64,35 @@ if __name__ == '__main__':
             # Add our new urls to the queue
             queue += scraper.href
 
+            # queue += scraper.program_urls
+
             # Debugging
             if global_data.DEBUG:
-                print 'Coursecode: %s' % scraper.courseCode if scraper.courseCode else 'No course code information'
+                print 'Coursecode: %s' % scraper.course_code if scraper.course_code else 'No course code information'
                 print 'Title: %s' % scraper.title if scraper.title else 'No title information'
-                print 'URL: %s' % scraper.courseUrl if scraper.courseUrl else 'No url information'
-                print 'Courseplan: %s' % scraper.coursePlan if scraper.coursePlan else 'No course plan information'
-                print 'Ledtext: %s' % scraper.introText if scraper.introText else 'No intro information'
-                print 'Senaste post titel: %s' % scraper.latestPostTitle if scraper.latestPostTitle else 'No latest title information'
-                print 'Senaste post skribent: %s' % scraper.latestPostAuthor if scraper.latestPostAuthor else 'No latest author information'
-                print 'Senaste post datum: %s' % scraper.latestPostTime if scraper.latestPostTime else 'No latest date information'
+                print 'URL: %s' % scraper.course_url if scraper.course_url else 'No url information'
+                print 'Courseplan: %s' % scraper.course_plan if scraper.course_plan else 'No course plan information'
+                print 'Ledtext: %s' % scraper.intro_text if scraper.intro_text else 'No intro information'
+                print 'Senaste post titel: %s' % scraper.latest_post_title if scraper.latest_post_title else 'No latest title information'
+                print 'Senaste post skribent: %s' % scraper.latest_post_author if scraper.latest_post_author else 'No latest author information'
+                print 'Senaste post datum: %s' % scraper.latest_post_time if scraper.latest_post_time else 'No latest date information'
 
             # Append our data to the list
             data.append({
-                'course_code': scraper.courseCode if scraper.courseCode else 'No course code information',
+                'course_code': scraper.course_code if scraper.course_code else 'No course code information',
                 'title': scraper.title if scraper.title else 'No title information',
-                'course_url': scraper.courseUrl if scraper.courseUrl else 'No url information',
-                'course_plan': scraper.coursePlan if scraper.coursePlan else 'No course plan information',
-                'intro_text': scraper.introText if scraper.introText else 'No intro information',
-                'latest_post_title': scraper.latestPostTitle if scraper.latestPostTitle else 'No latest title information',
-                'latest_post_author': scraper.latestPostAuthor if scraper.latestPostAuthor else 'No latest author information',
-                'latest_post_date': scraper.latestPostTime if scraper.latestPostTime else 'No latest date information',
+                'course_url': scraper.course_url if scraper.course_url else 'No url information',
+                'course_plan': scraper.course_plan if scraper.course_plan else 'No course plan information',
+                'intro_text': scraper.intro_text if scraper.intro_text else 'No intro information',
+                'latest_post_title': scraper.latest_post_title if scraper.latest_post_title else 'No latest title information',
+                'latest_post_author': scraper.latest_post_author if scraper.latest_post_author else 'No latest author information',
+                'latest_post_date': scraper.latest_post_time if scraper.latest_post_time else 'No latest date information',
                 'timestamp': datetime.datetime.now().strftime(global_data.CACHE_DATETIME_FORMAT) if datetime.datetime.now else 'Timestamp failed'
             })
 
-            if scraper.nextPage:
+            if scraper.next_page:
                 # Then fetch all the pages
-                queue += ["http://coursepress.lnu.se%s" % (scraper.nextPage)]
+                queue += ["http://coursepress.lnu.se%s" % (scraper.next_page)]
 
         print "*** Done scrapping!"
         print "*** Saving data..."
@@ -92,9 +105,10 @@ if __name__ == '__main__':
         sortedList = sorted(data, key=lambda k: k.get('title'))
 
         # Save the data to file
-        with open(global_data.DATA_FILE_NAME, 'w') as outfile:
-            json.dump(sortedList, outfile, default=scraper.date_handler, indent=True, encoding='utf-8')
+        save_data = SaveToJsonFile()
+        save_data.save_to_file(global_data.COURSE_DATA_FILE_NAME, sortedList)
         time.sleep(1)
+
         print "*** Done saving"
     else:
-        print "We still have some cached data, check '%s'" % global_data.DATA_FILE_NAME
+        print "We still have some cached data, check '%s'" % global_data.COURSE_DATA_FILE_NAME
