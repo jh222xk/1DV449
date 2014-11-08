@@ -176,7 +176,7 @@ class Ghost:
             for title in ul.findAll('div', {'class': 'item-title'}):
                 for anchor in title.findAll('a'):
                     # Get only the one with "program" in the url
-                    if "program" in anchor.get('href'):
+                    if "/program/" in anchor.get('href'):
                         hrefs.append(anchor.get('href'))
         except Exception, e:
             pass
