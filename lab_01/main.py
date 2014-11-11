@@ -26,7 +26,7 @@ class SaveToJsonFile:
 
 class global_data:
     DEBUG = False
-    CACHE_MIN = 0
+    CACHE_MIN = 5
     CACHE_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
     COURSE_DATA_FILE_NAME = 'course_data.json'
     PROGRAM_DATA_FILE_NAME = 'program_data.json'
