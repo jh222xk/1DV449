@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
-import argparse
 import requests
-import re
 import time
+import os
 
 
 class Ghost:
     url = "http://coursepress.lnu.se/kurser"
+    login_url = "https://coursepress.lnu.se/wp-login.php"
+    personal_course_url = ''
+    username = os.getenv('COURSEPRESS_LOGIN_NAME', '')
+    password = os.getenv('COURSEPRESS_LOGIN_PW', '')
+
     title = ''
     href = ''
     next_page = ''
@@ -41,16 +45,27 @@ class Ghost:
         """
         Scrapes a given url and parses the information
         """
-        if not site.startswith('http://') or site.startswith('https://'):
-            site = "http://" + site
 
         # Could sleep here to be nice
-        # time.sleep(3)
+        time.sleep(3)
 
-        page = requests.get(site, headers=self.headers)
+        # Set up our session
+        session = requests.Session()
+
+        # Login data to use with the session to be
+        login_data = {'log': self.username, 'pwd': self.password}
+
+        # Let's post our credentials to the login page.
+        post_page = session.post(self.login_url, headers=self.headers, data=login_data)
+
+        # Then perform an authorised request.
+        page = session.get(site, headers=self.headers)
 
         # Our soup
         self.soup = BeautifulSoup(page.content)
+
+        # Logged in user
+        self.personal_course_url = self.get_personal_url()
 
         # Common stuff
         self.url = self.get_url()
@@ -215,6 +230,17 @@ class Ghost:
                         hrefs.append(anchor.get('href'))
         except Exception, e:
             pass
+        return hrefs
+
+    def get_personal_url(self):
+        """
+        Get the personal url from the currently logged in user.
+        """
+        hrefs = []
+        try:
+            hrefs.append(self.soup.find('li', {'id': 'blogs-personal'}).find('a').get('href'))
+        except Exception, e:
+            return ""
         return hrefs
 
     def get_hrefs(self, specifier):
