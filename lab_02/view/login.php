@@ -20,6 +20,7 @@ class Login {
         <!-- Bootstrap core CSS -->
         <link href="static/css/bootstrap.css" rel="stylesheet">
         <link href="static/css/login.css" rel="stylesheet">
+        <script type="text/javascript" src="static/js/jquery.js"></script>
         <script src="static/js/bootstrap.js"></script>
       </head>
 

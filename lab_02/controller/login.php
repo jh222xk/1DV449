@@ -38,9 +38,7 @@ class Login {
       if ($this->model->isUser($user, $password)) {
         // Set stuff
         // $this->model->sec_session_start();
-        $_SESSION["user"] = $user;
-        $_SESSION["username"] = $user;
-        $_SESSION["login_string"] = hash('sha512', "123456" +$user);
+        $this->model->login($user);
 
         // Then show our new view.
         return $this->view->redirectTo('index.php');
