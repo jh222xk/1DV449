@@ -23,10 +23,14 @@ class Message {
    * @return VIEW?
    */
   public function messages() {
-    if ($this->view->userWantsToAddMsg() && $this->isAjax()) {
-      $message = $this->view->getMessageField();
-      $user = $_SESSION["user"];
-      return $this->addMessage($user, $message);
+    if ($this->view->userWantsToAddMsg()) {
+      if ($_SESSION["csrf_token"] === $_POST["csrf_token"]) {
+        $message = $this->view->getMessageField();
+        $user = $_SESSION["user"];
+        return $this->addMessage($user, $message);
+      } else {
+        return $this->view->csrfError();
+      }
     }
     if ($this->view->userWantsToGetMessages() && $this->isAjax()) {
       return $this->getMessages();

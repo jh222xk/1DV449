@@ -31,6 +31,10 @@ class Message {
     return isset($_GET['get_messages']);
   }
 
+  public function csrfError() {
+    return "<h1>ERROR, CSRF TOKEN INVALID!</h1>";
+  }
+
   /**
    * Just a bunch of plain ol'html.
    * @return Echos HTML
@@ -73,7 +77,10 @@ class Message {
                       <p id="numberOfMess">Antal meddelanden: <span id="nrOfMessages">0</span></p>
                       Message: <br />
                       <textarea name="mess" id="inputText" cols="55" rows="6"></textarea>
-                      <input class="btn btn-primary" type="button" name="add_message" id="buttonSend" value="Write your message" />
+                      <input type="hidden" id="csrf_token" name="csrf_token" value="';
+                      $ret .= $_SESSION["csrf_token"];
+
+                      $ret .= '"/><input class="btn btn-primary" type="button" name="add_message" id="buttonSend" value="Write your message" />
                       <span class="clear">&nbsp;</span>
 
                   </div>

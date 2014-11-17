@@ -8,6 +8,7 @@ class Login {
   private $db;
   private $adapter;
   private $clientIdentifier;
+  private $csrfToken;
 
   /**
    * @return Void
@@ -16,6 +17,14 @@ class Login {
     $this->adapter = new \SqliteAdapter();
     $this->db = $this->adapter->connect();
     $this->clientIdentifier = $_SERVER["REMOTE_ADDR"] . $_SERVER["HTTP_USER_AGENT"];
+  }
+
+  public function getCsrfToken() {
+    return $this->csrfToken;
+  }
+
+  private function generateCsrfToken() {
+    return base64_encode(openssl_random_pseudo_bytes(32));
   }
 
   /**
@@ -43,6 +52,7 @@ class Login {
     if ($storedUser !== null) {
       if ($this->checkHashedPassword($password, $storedUser[0]["password"])) {
         $_SESSION["user"] = $user;
+        $_SESSION["csrf_token"] = $this->generateCsrfToken();
         $_SESSION["client_identifier"] = base64_encode($this->clientIdentifier);
       }
     }

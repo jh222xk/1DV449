@@ -9,6 +9,7 @@ var MessageBoard = {
         MessageBoard.textField = document.getElementById("inputText");
         MessageBoard.nameField = document.getElementById("inputName");
         MessageBoard.messageArea = document.getElementById("messagearea");
+        MessageBoard.csrfToken = document.getElementById("csrf_token");
 
         // Add eventhandlers
         document.getElementById("inputText").onfocus = function (e) {
@@ -61,13 +62,13 @@ var MessageBoard = {
     },
     sendMessage: function () {
         if (MessageBoard.textField.value == "") return;
-
         // Make call to ajax
         $.ajax({
             type: "POST",
             url: "index.php?add_message",
             data: {
-                mess: MessageBoard.textField.value
+                mess: MessageBoard.textField.value,
+                csrf_token: MessageBoard.csrfToken.value
             }
         }).done(function (data) {
             window.location = "index.php";
