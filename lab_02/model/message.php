@@ -8,14 +8,20 @@ class Message {
   private $db;
   private $adapter;
 
+  /**
+   * @return Void
+   */
   public function __construct() {
     $this->adapter = new \SqliteAdapter();
     $this->db = $this->adapter->connect();
   }
 
   /**
-  * Called from AJAX to add stuff to DB
-  */
+   * Called from AJAX to add stuff to DB
+   * @param String $user
+   * @param String $message
+   * @return Array
+   */
   public function addToDB($user, $message) {
     $result = $this->adapter->insert("messages", array("message" => $message, "name" => $user));
 
@@ -23,7 +29,10 @@ class Message {
     return $result;
   }
 
-  // get the specific message
+  /**
+   * Get the specific message
+   * @return Array
+   */
   public function getMessages() {
     $fields = "*";
     $table = "messages";
@@ -32,5 +41,4 @@ class Message {
 
     return $result;
   }
-
 }

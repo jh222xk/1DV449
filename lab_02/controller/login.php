@@ -9,16 +9,22 @@ require_once 'controller/message.php';
 class Login {
   private $model;
   private $view;
-  private $msgView;
   private $msgController;
 
+  /**
+   * @param \View\Login $view
+   * @return Void
+   */
   function __construct(\View\Login $view) {
     $this->model = new \Model\Login();
     $this->view = $view;
-    $this->msgView = new \View\Message();
-    $this->msgController = new \Controller\Message($this->msgView);
+    $msgView = new \View\Message();
+    $this->msgController = new \Controller\Message($msgView);
   }
 
+  /**
+   * "Router", decides which page to be shown
+   */
   public function showPage() {
     if ($this->view->userWantsToLogout()) {
       return $this->logout();
@@ -29,6 +35,10 @@ class Login {
     return $this->login();
   }
 
+  /**
+   * Our login action, will login a user if to be true
+   * @return View?
+   */
   public function login() {
     $user = $this->view->getUserField();
     $password = $this->view->getPasswordField();
@@ -44,6 +54,9 @@ class Login {
     return $this->view->showLogin();
   }
 
+  /**
+   * Just a logout action that redirects us after logout.
+   */
   public function logout() {
     $this->model->logout();
     $this->view->redirectTo('index.php');

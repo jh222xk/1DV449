@@ -5,20 +5,36 @@ namespace View;
 class Message {
   private $message = "mess";
 
+  /**
+   * Get the value of the given message field.
+   * @return String
+   */
   public function getMessageField() {
     if (isset($_POST[$this->message])) {
       return $_POST[$this->message];
     }
   }
 
+  /**
+   * Just check if the user GET's the 'add_message'
+   * @return Boolean
+   */
   public function userWantsToAddMsg() {
     return isset($_GET['add_message']);
   }
 
+  /**
+   * Just check if the user GET's the 'get_messages'
+   * @return Boolean
+   */
   public function userWantsToGetMessages() {
     return isset($_GET['get_messages']);
   }
 
+  /**
+   * Just a bunch of plain ol'html.
+   * @return Echos HTML
+   */
   public function showMessages() {
     $ret = '
       <!DOCTYPE html>

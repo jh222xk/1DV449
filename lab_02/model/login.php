@@ -9,21 +9,20 @@ class Login {
   private $adapter;
   private $clientIdentifier;
 
+  /**
+   * @return Void
+   */
   public function __construct() {
     $this->adapter = new \SqliteAdapter();
     $this->db = $this->adapter->connect();
     $this->clientIdentifier = $_SERVER["REMOTE_ADDR"] . $_SERVER["HTTP_USER_AGENT"];
   }
 
-  // public function isUser($user, $password) {
-  //   $fields = "id";
-  //   $table = "users";
-
-  //   $result = $this->adapter->select($table, $fields, array("username", "password"), array($user, $password));
-
-  //   return $result;
-  // }
-
+  /**
+   * Get a given user using username as param
+   * @param String $user
+   * @return Array
+   */
   public function getUser($user) {
     $fields = "*";
     $table = "users";
@@ -33,6 +32,12 @@ class Login {
     return $result;
   }
 
+  /**
+   * Logging in the given user, with a given username and password
+   * @param String $user
+   * @param String $password
+   * @return Void
+   */
   public function login($user, $password) {
     $storedUser = $this->getUser($user);
     if ($storedUser !== null) {
@@ -43,11 +48,19 @@ class Login {
     }
   }
 
+  /**
+   * Logging out the user, i.e. kills the session.
+   * @return Void
+   */
   public function logout() {
     unset($_SESSION["user"]);
     unset($_SESSION["client_identifier"]);
   }
 
+  /**
+   * Check if we're logged in. If our session is fine.
+   * @return Boolean
+   */
   public function checkUser() {
     if(!isset($_SESSION["user"]) || isset($_SESSION["client_identifier"]) && base64_decode($_SESSION["client_identifier"]) !== $this->clientIdentifier) {
       return false;
@@ -59,13 +72,15 @@ class Login {
   }
 
   /**
-   * Hashes the password.
+   * Hashes the password and returns it, just something for
+   * generating a password.
+   * @return String
    */
   public function hashPassword($password) {
     return crypt($password);
   }
 
- /**
+  /**
    * Check if hashed password matches.
    * @param String $password
    * @param String $hashedPassword

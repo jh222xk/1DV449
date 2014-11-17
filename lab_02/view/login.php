@@ -6,6 +6,10 @@ class Login {
   private $user = "username";
   private $password = "password";
 
+  /**
+   * Just a bunch of plain ol'html.
+   * @return Echos HTML
+   */
   public function showLogin() {
     $ret = '<!DOCTYPE html>
     <html lang="en">
@@ -43,26 +47,46 @@ class Login {
     echo $ret;
   }
 
+  /**
+   * Just check if the user POST's the 'login'
+   * @return Boolean
+   */
   public function userWantsToLogin() {
     return isset($_POST['login']);
   }
 
+  /**
+   * Get the value of the given user field.
+   * @return String
+   */
   public function getUserField() {
     if (isset($_POST[$this->user])) {
       return $_POST[$this->user];
     }
   }
 
+  /**
+   * Just check if the user GET's the 'logout'
+   * @return Boolean
+   */
   public function userWantsToLogout() {
     return isset($_GET['logout']);
   }
 
+  /**
+   * Get the value of the given password field.
+   * @return String
+   */
   public function getPasswordField() {
     if (isset($_POST[$this->password])) {
       return $_POST[$this->password];
     }
   }
 
+  /**
+   * Just a simple redirect (header location).
+   * @return HTTP REDIRECT (301)
+   */
   public function redirectTo($path) {
     header('Location: ' . $path);
   }
