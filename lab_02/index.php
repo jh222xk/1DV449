@@ -12,6 +12,15 @@ $view = new \View\Login();
 $controller = new \Controller\Login($view);
 $controller->showPage();
 
+/*
+ * If we need to hash a password just do that below.
+ *
+ * require_once 'model/login.php';
+ * $model = new \Model\Login();
+ * $pass = $model->hashPassword("asdasd");
+ * var_dump($pass);
+ */
+
 // require_once 'model/message.php';
 
 // $model = new \Model\Message();

@@ -34,15 +34,11 @@ class Login {
     $password = $this->view->getPasswordField();
 
     if ($this->view->userWantsToLogin()) {
-
-      if ($this->model->isUser($user, $password)) {
         // Set stuff
-        // $this->model->sec_session_start();
-        $this->model->login($user);
+        $this->model->login($user, $password);
 
         // Then show our new view.
         return $this->view->redirectTo('index.php');
-      }
     }
     // Else redirect
     return $this->view->showLogin();

@@ -15,14 +15,14 @@ class Login {
     $this->clientIdentifier = $_SERVER["REMOTE_ADDR"] . $_SERVER["HTTP_USER_AGENT"];
   }
 
-  public function isUser($user, $password) {
-    $fields = "id";
-    $table = "users";
+  // public function isUser($user, $password) {
+  //   $fields = "id";
+  //   $table = "users";
 
-    $result = $this->adapter->select($table, $fields, array("username", "password"), array($user, $password));
+  //   $result = $this->adapter->select($table, $fields, array("username", "password"), array($user, $password));
 
-    return $result;
-  }
+  //   return $result;
+  // }
 
   public function getUser($user) {
     $fields = "*";
@@ -33,9 +33,14 @@ class Login {
     return $result;
   }
 
-  public function login($user) {
-    $_SESSION["user"] = $user;
-    $_SESSION["client_identifier"] = base64_encode($this->clientIdentifier);
+  public function login($user, $password) {
+    $storedUser = $this->getUser($user);
+    if ($storedUser !== null) {
+      if ($this->checkHashedPassword($password, $storedUser[0]["password"])) {
+        $_SESSION["user"] = $user;
+        $_SESSION["client_identifier"] = base64_encode($this->clientIdentifier);
+      }
+    }
   }
 
   public function logout() {
@@ -51,5 +56,22 @@ class Login {
     $user = $this->getUser($_SESSION["user"]);
 
     return true;
+  }
+
+  /**
+   * Hashes the password.
+   */
+  public function hashPassword($password) {
+    return crypt($password);
+  }
+
+ /**
+   * Check if hashed password matches.
+   * @param String $password
+   * @param String $hashedPassword
+   * @return Boolean
+   */
+  function checkHashedPassword($password, $hashedPassword) {
+    return crypt($password, $hashedPassword) === $hashedPassword;
   }
 }
