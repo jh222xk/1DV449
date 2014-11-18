@@ -26,6 +26,7 @@ class Message {
     if ($this->view->userWantsToAddMsg()) {
       if ($_SESSION["csrf_token"] === $_POST["csrf_token"]) {
         $message = $this->view->getMessageField();
+        $message = trim(filter_var($message, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
         $user = $_SESSION["user"];
         return $this->addMessage($user, $message);
       } else {
