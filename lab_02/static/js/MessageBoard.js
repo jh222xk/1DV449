@@ -41,6 +41,7 @@ var MessageBoard = {
     getMessages: function () {
         $.ajax({
             type: "GET",
+            cache: true,
             url: "index.php?get_messages"
         }).done(function (data) { // called when the AJAX call is ready
             data = JSON.parse(data);
@@ -65,6 +66,7 @@ var MessageBoard = {
         // Make call to ajax
         $.ajax({
             type: "POST",
+            cache: true,
             url: "index.php?add_message",
             data: {
                 mess: MessageBoard.textField.value,

@@ -20,12 +20,8 @@ class Login {
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="shortcut icon" href="static/ico/favicon.png">
+        <link href="static/css/compressed.css" rel="stylesheet">
         <title>Mezzy Labbage - Logga in</title>
-        <!-- Bootstrap core CSS -->
-        <link href="static/css/bootstrap.css" rel="stylesheet">
-        <link href="static/css/login.css" rel="stylesheet">
-        <script type="text/javascript" src="static/js/jquery.js"></script>
-        <script src="static/js/bootstrap.js"></script>
       </head>
 
       <body>
@@ -39,6 +35,7 @@ class Login {
             <button class="btn btn-lg btn-primary btn-block" name="login" type="submit">Log in</button>
           </form>
         </div> <!-- /container -->
+        <script src="static/js/compressed.js" async="async"></script>
       </body>
     </html>
 
