@@ -23,10 +23,14 @@ class Message {
    * @return Array
    */
   public function addToDB($user, $message) {
-    $result = $this->adapter->insert("messages", array("message" => $message, "name" => $user));
+    $result = $this->adapter->insert("messages", array("message" => $message, "name" => $user, "date" => time()));
 
     // Send the message back to the client
     return $result;
+  }
+
+  public function getLastMessage() {
+    return $this->adapter->select("messages", "date", null, null, "date", 1);
   }
 
   /**
@@ -37,7 +41,7 @@ class Message {
     $fields = "*";
     $table = "messages";
 
-    $result = $this->adapter->select($table, $fields);
+    $result = $this->adapter->select($table, $fields, null, null, "date");
 
     return $result;
   }

@@ -23,7 +23,7 @@ class Message {
    * @return VIEW?
    */
   public function messages() {
-    if ($this->view->userWantsToAddMsg()) {
+    if ($this->view->userWantsToAddMsg() && $this->isAjax()) {
       if ($_SESSION["csrf_token"] === $_POST["csrf_token"]) {
         $message = $this->view->getMessageField();
         $message = trim(filter_var($message, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
@@ -33,18 +33,34 @@ class Message {
         return $this->view->csrfError();
       }
     }
-    if ($this->view->userWantsToGetMessages() && $this->isAjax()) {
-      return $this->getMessages();
-    }
-    return $this->view->showMessages();
-  }
+    elseif ($this->view->userWantsToGetMessages() && $this->isAjax()) {
+      $data = $this->model->getMessages();
+      $counter = 0;
 
-  /**
-   * Get all the messages from the model
-   * @return Array
-   */
-  public function getMessages() {
-    echo json_encode($this->model->getMessages());
+      $last_ajax_call = isset($_GET['timestamp']) ? (int)$_GET['timestamp'] : null;
+      $last_change_in_data_file = $this->model->getLastMessage();
+
+      $last_change_in_data_file = (int)$last_change_in_data_file[0]["date"];
+
+      while ($last_ajax_call == null || $last_change_in_data_file > $last_ajax_call) {
+        usleep(10000);
+        clearstatcache();
+
+        $counter++;
+
+        if($counter >= 29) {
+          break;
+        }
+      }
+      $result = array(
+        'messages' => $data,
+        'timestamp' => $last_change_in_data_file
+      );
+      $json = json_encode($result);
+      echo $json;
+    } else {
+      return $this->view->showMessages();
+    }
   }
 
   /**

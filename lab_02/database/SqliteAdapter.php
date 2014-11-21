@@ -37,7 +37,7 @@ class SqliteAdapter {
     }
 
     $sql = "SELECT " . $fields . " FROM " . $table . ($where ? " WHERE " . $where . " = ?" : "") .
-      ($order ? " ORDER BY " . $order . " DESC" : "");
+      ($order ? " ORDER BY " . $order . " DESC" : "") . ($limit ? " LIMIT " . $limit : "");
 
     $query = $db->prepare($sql);
     $params ? $query->execute($params) : $query->execute();

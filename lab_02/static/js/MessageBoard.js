@@ -22,10 +22,6 @@ var MessageBoard = {
             MessageBoard.sendMessage();
             return false;
         }
-        document.getElementById("buttonLogout").onclick = function (e) {
-            MessageBoard.logout();
-            return false;
-        }
 
         MessageBoard.textField.onkeypress = function (e) {
             if (!e) var e = window.event;
@@ -38,55 +34,72 @@ var MessageBoard = {
         }
 
     },
-    getMessages: function () {
+    getMessages: function (timestamp) {
+        var self = this;
+        var url, obj, queryString;
+
+        url = "index.php?get_messages";
+
+        queryString = {'timestamp' : timestamp};
+
         $.ajax({
-            type: "GET",
-            cache: true,
-            url: "index.php?get_messages"
-        }).done(function (data) { // called when the AJAX call is ready
-            data = JSON.parse(data);
-
-            for (var mess in data) {
-                var obj = data[mess];
-                var text = obj.name + " said:\n" + obj.message;
-                var mess = new Message(text, new Date());
-                var messageID = MessageBoard.messages.push(mess) - 1;
-
-                MessageBoard.renderMessage(messageID);
-
+            type: 'GET',
+            url: url,
+            data: queryString,
+            success: function(data){
+                obj = jQuery.parseJSON(data);
+                self.renderMessages(obj.messages);
+                setTimeout(function() {
+                    self.getMessages(obj.timestamp);
+                }, 1000);
             }
-            document.getElementById("nrOfMessages").innerHTML = MessageBoard.messages.length;
-
         });
-
-
     },
     sendMessage: function () {
-        if (MessageBoard.textField.value == "") return;
-        // Make call to ajax
-        $.ajax({
-            type: "POST",
-            cache: true,
-            url: "index.php?add_message",
-            data: {
-                mess: MessageBoard.textField.value,
-                csrf_token: MessageBoard.csrfToken.value
-            }
-        }).done(function (data) {
-            window.location = "index.php";
+        var self = this;
+        var params, jqxhr;
+
+        if (self.textField.value == "") return;
+
+        url = "index.php?add_message";
+
+        params = {
+            mess: self.textField.value,
+            csrf_token: self.csrfToken.value
+        };
+
+        jqxhr = $.post(url, params, function(data) {
+            data = $.parseJSON(data);
+            self.getMessages();
+        }).fail(function() {
+            console.log("FAILURE SENDING");
         });
 
     },
-    renderMessages: function () {
+    renderMessages: function (data) {
+        var self = this;
+        var mess, obj, text, mess,
+            div, textTag, i;
+
         // Remove all messages
         MessageBoard.messageArea.innerHTML = "";
 
-        // Renders all messages.
-        for (var i = 0; i < MessageBoard.messages.length; ++i) {
-            MessageBoard.renderMessage(i);
-        }
+        div = document.createElement("div");
+        div.className = "message";
 
-        document.getElementById("nrOfMessages").innerHTML = MessageBoard.messages.length;
+        textTag = document.createElement("p");
+
+        i = 0;
+        for (mess in data) {
+            obj = data[mess];
+            text = obj.name + " said:\n" + obj.message;
+            mess = new Message(text, new Date(obj.date *1000));
+            messageID = self.messages.push(mess) - 1;
+            self.renderMessage(messageID);
+            i++;
+        };
+
+        document.getElementById("nrOfMessages").innerHTML = i;
     },
     renderMessage: function (messageID) {
         // Message div
@@ -141,9 +154,6 @@ var MessageBoard = {
         var showTime = "Created " + time.toLocaleDateString() + " at " + time.toLocaleTimeString();
 
         alert(showTime);
-    },
-    logout: function () {
-        window.location = "index.php?logout";
     }
 }
 

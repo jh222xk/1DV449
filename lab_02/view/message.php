@@ -58,7 +58,7 @@ class Message {
               <div id="container">
 
                   <div id="messageboard">
-                      <input class="btn btn-danger" type="button" id="buttonLogout" value="Logout" style="margin-bottom: 20px;" />
+                      <a href="?logout" class="btn btn-danger" id="buttonLogout" value="Logout" style="margin-bottom: 10px;">Logout</a>
 
                       <div id="messagearea"></div>
 
@@ -74,7 +74,7 @@ class Message {
                   </div>
 
               </div>
-              <!-- This script is running to get the messages -->
+
             <script src="static/js/compressed.js"></script>
             <script>
               $(document).ready(function() {
