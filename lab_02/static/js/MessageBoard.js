@@ -32,7 +32,19 @@ var MessageBoard = {
                 return false;
             }
         }
+        if ("WebSocket" in window) {
+            MessageBoard.WebSocket = new WebSocket('ws://localhost:8080');
+        }
+        MessageBoard.websocket();
+    },
+    websocket: function() {
+        MessageBoard.WebSocket.onopen = function(e) {
+            console.log("Connection to websocket established!");
+        };
 
+        MessageBoard.WebSocket.onmessage = function(e) {
+            MessageBoard.getMessages();
+        };
     },
     getMessages: function (timestamp) {
         var self = this;
@@ -48,10 +60,12 @@ var MessageBoard = {
             data: queryString,
             success: function(data){
                 obj = jQuery.parseJSON(data);
-                self.renderMessages(obj.messages);
-                setTimeout(function() {
-                    self.getMessages(obj.timestamp);
-                }, 1000);
+                MessageBoard.renderMessages(obj.messages);
+                if (!"WebSocket" in window) {
+                    setTimeout(function() {
+                        MessageBoard.getMessages(obj.timestamp);
+                    }, 1000);
+                }
             }
         });
     },
@@ -70,6 +84,9 @@ var MessageBoard = {
 
         jqxhr = $.post(url, params, function(data) {
             data = $.parseJSON(data);
+            if ("WebSocket" in window) {
+              MessageBoard.WebSocket.send(MessageBoard.textField.value);
+            };
             self.getMessages();
         }).fail(function() {
             console.log("FAILURE SENDING");
