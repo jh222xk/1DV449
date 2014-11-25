@@ -29,20 +29,26 @@ class SqliteAdapter {
    * @param String $limit
    * @return Array
    */
-  public function select($table, $fields = "*", $where = null, array $params = null, $order = null, $limit = null) {
+  public function select($table, $fields = "*", $where = null, $operand = "=", array $params = null, $order = null, $limit = null) {
     $db = $this->dbConnection;
 
     if ($where > 1) {
       $where = join(" = ? AND ", array_values($where));
     }
 
-    $sql = "SELECT " . $fields . " FROM " . $table . ($where ? " WHERE " . $where . " = ?" : "") .
+    $sql = "SELECT " . $fields . " FROM " . $table . ($where ? " WHERE " . $where . " " . $operand . " ?" : "") .
       ($order ? " ORDER BY " . $order . " DESC" : "") . ($limit ? " LIMIT " . $limit : "");
 
     $query = $db->prepare($sql);
     $params ? $query->execute($params) : $query->execute();
 
     $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+    // var_dump($where);
+    // var_dump($params);
+    // var_dump($operand);
+    // var_dump($sql);
+    // die;
 
     if ($result) {
       return $result;

@@ -36,7 +36,7 @@ class Login {
     $fields = "*";
     $table = "users";
 
-    $result = $this->adapter->select($table, $fields, "username", array($user));
+    $result = $this->adapter->select($table, $fields, "username", "=", array($user));
 
     return $result;
   }

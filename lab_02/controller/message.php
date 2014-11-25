@@ -8,6 +8,7 @@ require_once 'view/message.php';
 class Message {
   private $model;
   private $view;
+  private $login;
 
   /**
    * @param \View\Message $view
@@ -16,6 +17,7 @@ class Message {
   function __construct(\View\Message $view) {
     $this->model = new \Model\Message();
     $this->view = $view;
+    $this->login = new \Model\Login();
   }
 
   /**
@@ -23,7 +25,7 @@ class Message {
    * @return VIEW?
    */
   public function messages() {
-    if ($this->view->userWantsToAddMsg() && $this->isAjax()) {
+    if ($this->view->userWantsToAddMsg() && $this->login->checkUser() && $this->isAjax()) {
       if ($_SESSION["csrf_token"] === $_POST["csrf_token"]) {
         $message = $this->view->getMessageField();
         $message = trim(filter_var($message, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
@@ -33,33 +35,30 @@ class Message {
         return $this->view->csrfError();
       }
     }
-    elseif ($this->view->userWantsToGetMessages() && $this->isAjax()) {
-      $data = $this->model->getMessages();
-      $counter = 0;
-
-      $last_ajax_call = isset($_GET['timestamp']) ? (int)$_GET['timestamp'] : null;
-      $last_change_in_data_file = $this->model->getLastMessage();
-
-      $last_change_in_data_file = (int)$last_change_in_data_file[0]["date"];
-
-      while ($last_ajax_call == null || $last_change_in_data_file > $last_ajax_call) {
-        usleep(10000);
-        clearstatcache();
-
-        $counter++;
-
-        if($counter >= 29) {
-          break;
-        }
-      }
-      $result = array(
-        'messages' => $data,
-        'timestamp' => $last_change_in_data_file
-      );
-      $json = json_encode($result);
-      echo $json;
+    elseif ($this->view->userWantsToGetMessages() && $this->login->checkUser() && $this->isAjax()) {
+      session_write_close();
+      $timestamp = isset($_GET['timestamp']) ? (int)$_GET['timestamp'] : 0;
+      $this->getMessages($timestamp);
     } else {
       return $this->view->showMessages();
+    }
+  }
+
+  public function getMessages($timestamp) {
+    set_time_limit(0);
+    while (true) {
+      $result = array();
+
+      $result = $this->model->getLastMessage($timestamp);
+
+      if(count($result) > 0) {
+        $dbTime = (int)$result[0]["date"];
+        echo json_encode(array('messages' => array_reverse($result), "timestamp" => $dbTime));
+        break;
+      }else{
+        sleep(1);
+        continue;
+      }
     }
   }
 

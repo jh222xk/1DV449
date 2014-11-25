@@ -34,8 +34,8 @@ var MessageBoard = {
         }
         if ("WebSocket" in window) {
             MessageBoard.WebSocket = new WebSocket('ws://localhost:8080');
+            MessageBoard.websocket();
         }
-        MessageBoard.websocket();
     },
     websocket: function() {
         MessageBoard.WebSocket.onopen = function(e) {
@@ -43,57 +43,10 @@ var MessageBoard = {
         };
 
         MessageBoard.WebSocket.onmessage = function(e) {
-            MessageBoard.getMessages();
+            MessageBoard.getMessages(null);
         };
     },
-    getMessages: function (timestamp) {
-        var self = this;
-        var url, obj, queryString;
-
-        url = "index.php?get_messages";
-
-        queryString = {'timestamp' : timestamp};
-
-        $.ajax({
-            type: 'GET',
-            url: url,
-            data: queryString,
-            success: function(data){
-                obj = jQuery.parseJSON(data);
-                MessageBoard.renderMessages(obj.messages);
-                if (!"WebSocket" in window) {
-                    setTimeout(function() {
-                        MessageBoard.getMessages(obj.timestamp);
-                    }, 1000);
-                }
-            }
-        });
-    },
-    sendMessage: function () {
-        var self = this;
-        var params, jqxhr;
-
-        if (self.textField.value == "") return;
-
-        url = "index.php?add_message";
-
-        params = {
-            mess: self.textField.value,
-            csrf_token: self.csrfToken.value
-        };
-
-        jqxhr = $.post(url, params, function(data) {
-            data = $.parseJSON(data);
-            if ("WebSocket" in window) {
-              MessageBoard.WebSocket.send(MessageBoard.textField.value);
-            };
-            self.getMessages();
-        }).fail(function() {
-            console.log("FAILURE SENDING");
-        });
-
-    },
-    renderMessages: function (data) {
+    renderFirstTimeData: function (data) {
         var self = this;
         var mess, obj, text, mess,
             div, textTag, i;
@@ -117,6 +70,83 @@ var MessageBoard = {
         };
 
         document.getElementById("nrOfMessages").innerHTML = i;
+    },
+    getMessages: function (timestamp) {
+        var self = this;
+        var url, obj, queryString;
+
+        url = "index.php?get_messages";
+
+        if (!timestamp) {
+            timestamp = null;
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: {'timestamp' : timestamp},
+            async: true,
+            cache: true,
+            dataType: 'json',
+            success: function(data) {
+                objData = data.messages;
+                if (timestamp !== null) {
+                    for(var mess in objData) {
+                        var obj = objData[mess];
+                        var text = obj.name +" said:\n" +obj.message;
+                        var mess = new Message(text, new Date());
+                        var messageID = MessageBoard.messages.push(mess)-1;
+                        MessageBoard.renderMessage(messageID);
+                    }
+                    document.getElementById("nrOfMessages").innerHTML = MessageBoard.messages.length;
+                }
+                else {
+                    MessageBoard.renderFirstTimeData(objData);
+                }
+
+                if (!MessageBoard.WebSocket) {
+                    MessageBoard.getMessages(data.timestamp);
+                };
+
+            },
+            error: function(e) {
+                MessageBoard.getMessages(null);
+            }
+        });
+    },
+    sendMessage: function () {
+        var self = this;
+        var params, jqxhr;
+
+        if (self.textField.value == "") return;
+
+        url = "index.php?add_message";
+
+        params = {
+            mess: self.textField.value,
+            csrf_token: self.csrfToken.value
+        };
+
+        jqxhr = $.post(url, params, function(data) {
+            data = $.parseJSON(data);
+            if ("WebSocket" in window) {
+              MessageBoard.WebSocket.send(MessageBoard.textField.value);
+              MessageBoard.getMessages(null);
+            };
+        }).fail(function() {
+            console.log("FAILURE SENDING");
+        });
+
+    },
+    renderMessages: function (data) {
+        MessageBoard.messageArea.innerHTML = "";
+
+        console.log(MessageBoard.messages);
+        // Renders all messages.
+        for(var i=0; i < MessageBoard.messages.length; ++i){
+            MessageBoard.renderMessage(i);
+        }
+        document.getElementById("nrOfMessages").innerHTML = MessageBoard.messages.length;
     },
     renderMessage: function (messageID) {
         // Message div
@@ -154,7 +184,8 @@ var MessageBoard = {
 
         div.appendChild(spanClear);
 
-        MessageBoard.messageArea.appendChild(div);
+        MessageBoard.messageArea.insertBefore(div, MessageBoard.messageArea.firstChild);
+
     },
     removeMessage: function (messageID) {
         if (window.confirm("Vill du verkligen radera meddelandet?")) {

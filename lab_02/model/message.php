@@ -29,8 +29,9 @@ class Message {
     return $result;
   }
 
-  public function getLastMessage() {
-    return $this->adapter->select("messages", "date", null, null, "date", 1);
+  public function getLastMessage($timestamp) {
+    return $this->adapter->select("messages", "*", "date", ">", array($timestamp), "date");
+    // $table, $fields = "*", $where = null, array $params = null, $order = null, $limit = null
   }
 
   /**
@@ -41,7 +42,7 @@ class Message {
     $fields = "*";
     $table = "messages";
 
-    $result = $this->adapter->select($table, $fields, null, null, "date");
+    $result = $this->adapter->select($table, $fields, null, null, null, "date");
 
     return $result;
   }
