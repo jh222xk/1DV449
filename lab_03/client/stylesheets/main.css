@@ -1,0 +1,188 @@
+/*#map-canvas {
+  width: 100%;
+  height: 400px;
+}
+*/
+#map-canvas {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+#map-canvas::before {
+  display: block;
+  content: "";
+  width: 100%;
+  height: 10%;
+}
+
+#map-canvas::after {
+  display: block;
+  content: "";
+  width: 100%;
+  height: 10%;
+}
+
+#info-window {
+  /*min-height: 80px;*/
+  height: auto !important;
+  min-height: 100% !important;
+}
+
+.gm-style-iw {
+  height: auto !important;
+}
+
+.gm-style-iw > div{
+  height: auto !important;
+  min-height: 100% !important;
+  padding-bottom: .5em;
+}
+
+#right-bar-icon {
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  margin: 0;
+  padding: 1.2em;
+  right: 0;
+  z-index: 1000;
+  overflow: hidden;
+  top: 25%;
+}
+
+#right-bar-icon .glyphicon {
+  cursor: pointer;
+}
+
+#right-bar {
+  background-color: rgba(255, 255, 255, 0.5);
+  width: 250px;
+  display: none;
+  height: 100%;
+  position: fixed;
+  right: 0;
+  margin: 0;
+  padding: 1em;
+  top: 0;
+  z-index: 1000;
+  overflow: auto;
+}
+
+#trafic-categories {
+  margin-bottom: 1em;
+}
+
+#right-bar h3 {
+  margin: 0 0 .5em 0;
+  padding: 0;
+}
+
+#info-content {
+  display: none;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 100%;
+  height: auto;
+  position: fixed;
+  margin: 0;
+  padding: 1.2em;
+  top: 0;
+  z-index: 1000;
+  overflow: hidden;
+  left: 0;
+}
+
+#info-content .content {
+  width: 100%;
+  margin: 0 0 0 2em;
+}
+
+#info-content .content h3 {
+  margin: 0 0 .5em 0;
+}
+
+#info-dropdown {
+  background-color: rgba(255, 255, 255, 0.7);
+  width: 100%;
+  padding: 1em;
+  border: none;
+  border-radius: 0px;
+}
+
+#info-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  margin: 0;
+  padding: 1.2em;
+  top: 0;
+  z-index: 1000;
+  overflow: hidden;
+  left: 50%;
+}
+
+.dropdown .glyphicon {
+  cursor: pointer;
+}
+
+#iron-router-progress {
+  background-color: #26CDEE;
+  box-shadow: 0 0 5px #26CDEE;
+}
+
+#iron-router-progress.spinner:before {
+  border-color: #26CDEE;
+}
+
+@media screen and (min-width: 768px) {
+  .row-offcanvas {
+    height: auto !important;
+    position: relative;
+    -webkit-transition: all .25s ease-out;
+    -moz-transition: all .25s ease-out;
+    transition: all .25s ease-out;
+  }
+
+  .row-offcanvas-right {
+    right: 25%;
+  }
+
+  .row-offcanvas-right .sidebar-offcanvas {
+    right: -31%;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 1em;
+    height: 650px;
+    overflow: auto;
+  }
+
+  .row-offcanvas-right.active {
+    right: 0;
+  }
+
+  .row-offcanvas .content {
+    width: 75%;
+    -webkit-transition: all .25s ease-out;
+    -moz-transition: all .25s ease-out;
+    transition: all .25s ease-out;
+  }
+
+  .row-offcanvas h3 {
+    margin: 0 0 .5em 0;
+    padding: 0;
+  }
+
+  .row-offcanvas.active .content {
+    width: 100%;
+  }
+
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 25%;
+  }
+}

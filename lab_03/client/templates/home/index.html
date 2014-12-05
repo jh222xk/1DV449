@@ -1,0 +1,41 @@
+<template name="home">
+  {{> map}}
+  <div class="dropdown">
+    <span class="glyphicon glyphicon-info-sign" id="info-box" data-toggle="dropdown" aria-expanded="true">
+    </span>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="info-box" id="info-dropdown">
+      <li role="presentation"><img src="/marker_small_green.png" /> menas med <strong>mindre störning</strong></li>
+      <li><img src="/marker_small_blue.png" /> menas med <strong>information</strong></li>
+      <li><img src="/marker_small_yellow.png" /> menas med <strong>störning</strong></li>
+      <li><img src="/marker_small_orange.png" /> menas med <strong>stor händelse</strong></li>
+      <li><img src="/marker_small_red.png" /> menas med <strong>mycket allvarlig händelse</strong></li>
+    </ul>
+  </div>
+
+  <div id="right-bar-icon" data-toggle="offcanvas">
+    <span class="glyphicon glyphicon-align-justify"></span>
+  </div>
+
+  <div id="right-bar">
+    <h3>Kategorier</h3>
+    <select class="form-control" id="trafic-categories">
+      <option value="4" selected="selected">Alla kategorier</option>
+    </select>
+    {{#each sr}}
+      {{>traficItem}}
+    {{/each}}
+  </div>
+
+  <div class="row-offcanvas row-offcanvas-right active">
+    <div class="sidebar-offcanvas" id="sidebar" role="navigation">
+      <h3>Kategorier</h3>
+      <p>Tips, skrolla neråt för att se fler händelser.</p>
+      <select class="form-control" id="trafic-categories">
+        <option value="4" selected="selected">Alla kategorier</option>
+      </select>
+      {{#each sr}}
+        {{>traficItem}}
+      {{/each}}
+    </div>
+  </div>
+</template>
