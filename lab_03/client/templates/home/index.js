@@ -82,7 +82,7 @@
             icon: (item.priority == 5) ? '/marker_small_green.png'
               : (item.priority == 4) ? '/marker_small_blue.png'
               : (item.priority == 3) ? '/marker_small_yellow.png'
-              : (item.priority == 2) ? '/marker_small_ornage.png'
+              : (item.priority == 2) ? '/marker_small_orange.png'
               : 'marker_small_red.png',
             postId: item._id
           });
@@ -158,9 +158,13 @@
       var selectVal = $(event.currentTarget).find(':selected').attr('value');
       Session.set("selectVal", selectVal);
     },
-    'click a': function(event) {
+    'click .trafic-info a': function(event) {
       var clickedMarker = $(event.currentTarget).attr('class');
       google.maps.event.trigger(markersArray[clickedMarker], 'click');
+    },
+    'click .area-info a': function(event) {
+      var clickedArea = $(event.currentTarget).attr('href');
+      console.log(clickedArea);
     }
   });
 })();

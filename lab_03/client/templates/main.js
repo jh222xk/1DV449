@@ -1,5 +1,9 @@
 SR = new Mongo.Collection('sr');
 
+TraficAreas = new Mongo.Collection('trafic_areas');
+
+Meteor.subscribe('trafic_areas');
+
 Template.home.helpers({
   sr: function() {
     var selectVal = Session.get("selectVal");
@@ -14,5 +18,8 @@ Template.home.helpers({
       srInfo[i].index = index++;
     })
     return srInfo;
+  },
+  areas: function() {
+    return TraficAreas.find({});
   }
 });

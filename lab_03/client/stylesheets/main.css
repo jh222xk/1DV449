@@ -36,7 +36,7 @@
   height: auto !important;
 }
 
-.gm-style-iw > div{
+.gm-style-iw > div {
   height: auto !important;
   min-height: 100% !important;
   padding-bottom: .5em;
@@ -184,5 +184,15 @@
     position: absolute;
     top: 0;
     width: 25%;
+  }
+
+  .sidebar-offcanvas ul {
+    /*margin: 0;*/
+    padding: 0;
+    list-style-type: none;
+  }
+
+  .sidebar-offcanvas ul a {
+    cursor: pointer;
   }
 }
