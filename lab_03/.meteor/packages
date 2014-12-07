@@ -4,7 +4,6 @@
 # but you can also edit it by hand.
 
 meteor-platform
-mizzao:bootstrap-3
 http
 meteorhacks:npm
 
@@ -14,4 +13,7 @@ npm-container
 mrt:moment
 multiply:iron-router-progress
 iron:router
+jquery
+flowkey:bootstrap-tour
+mizzao:bootstrap-3
 
