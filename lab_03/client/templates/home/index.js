@@ -14,8 +14,11 @@
     moment.locale('sv');
 
     var markerUrl = Session.get('marker_url');
+    var areaUrl = Session.get('clickedArea');
 
     console.log(markerUrl);
+
+    console.log(areaUrl);
 
     // if (markerUrl) {
     //   var clickedMarker = $(event.currentTarget).attr('class');
@@ -163,7 +166,9 @@
       google.maps.event.trigger(markersArray[clickedMarker], 'click');
     },
     'click .area-info a': function(event) {
+      event.preventDefault();
       var clickedArea = $(event.currentTarget).attr('href');
+      Session.set("clickedArea", clickedArea);
       console.log(clickedArea);
     }
   });
